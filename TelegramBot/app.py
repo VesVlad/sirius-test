@@ -34,10 +34,10 @@ async def answer(update: Update, context: CallbackContext):
         curr_context = get_context(user_id)
         curr_context = curr_context if curr_context.endswith("@@ПЕРВЫЙ@@") else curr_context + "@@ПЕРВЫЙ@@"
         curr_context = curr_context.lstrip() + f" {msg}" + "@@ВТОРОЙ@@"
-        answer = requests.get(f"http://server:4321/api/{msg}")
+        answer = requests.get(f"http://server:4321/api/{curr_context}")
         answer.encoding = "utf-8"
         remove_context(user_id)
-        add_context(user_id, re.sub(r"(\@\@ПЕРВЫЙ\@\@)+", "@@ПЕРВЫЙ@@", answer.text))
+        add_context(user_id, answer.text)
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=answer.text.split("@@ВТОРОЙ@@")[-1].split("@@ПЕРВЫЙ@@")[0])
 
@@ -55,10 +55,10 @@ async def answer_audio(update: Update, context: CallbackContext):
         curr_context = get_context(user_id)
         curr_context = curr_context if curr_context.endswith("@@ПЕРВЫЙ@@") else curr_context + "@@ПЕРВЫЙ@@"
         curr_context = curr_context + f" {msg}" + " @@ВТОРОЙ@@"
-        answer = requests.get(f"http://server:4321/api/{msg}")
+        answer = requests.get(f"http://server:4321/api/{curr_context}")
         answer.encoding = "utf-8"
         remove_context(user_id)
-        add_context(user_id, re.sub(r"(\@\@ПЕРВЫЙ\@\@)+", "@@ПЕРВЫЙ@@", answer.text))
+        add_context(user_id, answer.text)
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=answer.text.split("@@ВТОРОЙ@@")[-1].split("@@ПЕРВЫЙ@@")[0])
         os.remove(f"{output}.wav")
