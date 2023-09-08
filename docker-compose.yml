@@ -1,0 +1,48 @@
+version: "2.3"
+services:
+
+  postgres:
+    image: postgres:14.1
+    environment:
+      POSTGRES_DB: "tinkoff_bot_db"
+      POSTGRES_USER: "bot_user"
+      POSTGRES_PASSWORD: "trybetter"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U bot_user -d tinkoff_bot_db" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - tinkoff
+
+  bot:
+    build: TelegramBot/
+    command: python app.py
+    networks:
+      - tinkoff
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  server:
+    build: FastAPI/
+    ports:
+      - "4321:4321"
+
+    depends_on:
+      - bot
+      - postgres
+    networks:
+      - tinkoff
+volumes:
+  pgdata:
+
+networks:
+  tinkoff:
+    external: false

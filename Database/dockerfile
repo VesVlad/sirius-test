@@ -1,0 +1,7 @@
+FROM python:3.9
+RUN apt-get update && apt-get install python3-pip -y && pip install --upgrade pip && pip install pipenv
+RUN mkdir -p /usr/src/base/
+WORKDIR /usr/src/base/
+COPY . /usr/src/base/
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["python", "db.py"]

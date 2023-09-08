@@ -1,0 +1,9 @@
+FROM python:3.9
+RUN apt-get update && apt-get install python3-pip -y && pip install --upgrade pip && pip install pipenv
+RUN pip install -U openai-whisper && apt-get -y install ffmpeg && pip install setuptools-rust
+RUN mkdir -p /usr/src/bot/
+WORKDIR /usr/src/bot/
+COPY . /usr/src/bot/
+
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["python", "app.py"]

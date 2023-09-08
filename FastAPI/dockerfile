@@ -1,0 +1,11 @@
+FROM python:3.9
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+RUN apt-get update && apt-get install python3-pip -y && pip install --upgrade pip && pip install pipenv
+RUN mkdir -p /usr/src/api/
+WORKDIR /usr/src/api/
+COPY . /usr/src/api/
+RUN cd DockerRuDialoGPT-medium && apt-get -y install git-lfs && git lfs update --force && git lfs install && git lfs pull && cd ..
+RUN pip install --no-cache-dir -r requirements.txt && python model.py
+
+CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0" ,"--port", "4321"]
